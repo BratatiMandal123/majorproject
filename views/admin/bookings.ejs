@@ -1,0 +1,94 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4">Admin Dashboard 📊</h2>
+
+    <!-- 🔥 STATS -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Total</h5>
+                <h3><%= totalBookings %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Confirmed</h5>
+                <h3 class="text-success"><%= confirmedBookings %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Pending</h5>
+                <h3 class="text-warning"><%= pendingBookings %></h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Revenue</h5>
+                <h3 class="text-primary">₹ <%= totalRevenue %></h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 FILTER -->
+    <div class="mb-3 text-center">
+        <a href="/admin/bookings" class="btn btn-dark btn-sm">All</a>
+        <a href="/admin/bookings?status=confirmed" class="btn btn-success btn-sm">Confirmed</a>
+        <a href="/admin/bookings?status=pending" class="btn btn-warning btn-sm">Pending</a>
+        <a href="/admin/bookings?status=expired" class="btn btn-danger btn-sm">Expired</a>
+        <a href="/admin/bookings?status=cancelled" class="btn btn-secondary btn-sm">Cancelled</a>
+    </div>
+
+    <!-- 📋 TABLE -->
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Listing</th>
+                <th>Dates</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% bookings.forEach(b => { %>
+                <tr>
+                    <td><%= b.user.username %></td>
+                    <td><%= b.listing.title %></td>
+                    <td>
+                        <%= b.checkIn.toDateString() %> -
+                        <%= b.checkOut.toDateString() %>
+                    </td>
+                    <td>₹ <%= b.totalPrice %></td>
+
+                    <td>
+                        <span class="
+                            <%= b.status === 'confirmed' ? 'text-success' :
+                                b.status === 'pending' ? 'text-warning' :
+                                b.status === 'expired' ? 'text-danger' :
+                                'text-muted' %>
+                        ">
+                            <%= b.status %>
+                        </span>
+                    </td>
+
+                    <td>
+                        <% if (b.status !== "cancelled") { %>
+                            <form method="POST" action="/admin/bookings/<%= b._id %>/cancel">
+                                <button class="btn btn-sm btn-danger">Cancel</button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+</div>

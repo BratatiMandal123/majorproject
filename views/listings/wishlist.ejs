@@ -1,0 +1,36 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4">
+
+<h2 class="mb-4">❤️ My Wishlist</h2>
+
+<div class="row">
+
+<% wishlist.forEach(listing => { %>
+
+<div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+
+<a href="/listings/<%= listing._id %>">
+
+<div class="card">
+
+<img src="<%= listing.image.url %>" 
+style="height:200px; object-fit:cover;">
+
+<div class="card-body">
+<b><%= listing.title %></b><br>
+₹ <%= listing.price.toLocaleString("en-IN") %>
+</div>
+
+</div>
+
+</a>
+
+</div>
+
+<% }) %>
+
+</div>
+
+</div>
+

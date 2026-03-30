@@ -1,0 +1,410 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+
+<div class="col-8 offset-3 mb-3">
+<h3><%= listing.title %></h3>
+</div>
+
+<div class="card col-6 offset-3 show-card listing-card">
+<img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
+
+<div class="card-body" style="background-color:#f9f9f9; padding:20px; border-radius:10px;">
+<h3 style="font-weight:600; color:#1c1c1c"><%= listing.title %></h3>
+
+<p style="color:#555; font-size:1rem"><%= listing.description %></p>
+
+<p><b>Owner:</b> <%= listing.owner.username %></p>
+
+<p><b>Location:</b> <%= listing.location %>, <%= listing.country %></p>
+
+<p><b>Price:</b> ₹<%= listing.price.toLocaleString("en-IN") %></p>
+
+</div>
+</div>
+
+
+<% if(currUser && listing.owner._id.equals(currUser._id)){ %>
+
+<div class="btns">
+
+<a href="/listings/<%=listing._id %>/edit" class="btn btn-dark col-1 offset-3 edit-btn">
+Edit
+</a>
+
+<form method="POST" action="/listings/<%=listing._id%>?_method=DELETE">
+<button class="btn btn-dark offset-5">Delete</button>
+</form>
+
+</div>
+
+<% } %>
+
+
+<div class="col-6 offset-3 mt-3">
+
+<h3>Book this stay</h3>
+
+<% if(currUser){ %>
+
+<div class="booking-form">
+
+    <label>Check-in Date</label>
+    <input type="text" id="checkIn" class="form-control mb-2">
+
+    <label>Check-out Date</label>
+    <input type="text" id="checkOut" class="form-control mb-3">
+
+
+    <div id="priceDetails" class="mt-3 p-3 border rounded" style="background:#f8f9fa;">
+    <p>₹<span id="pricePerNight"><%= listing.price %></span> × 
+    <span id="nights">0</span> nights</p>
+
+    <p>Subtotal: ₹<span id="subtotal">0</span></p>
+
+    <p>Taxes: ₹<span id="taxes">0</span></p>
+
+    <hr>
+
+    <h5>Total: ₹<span id="total">0</span></h5>
+    </div>    
+
+
+
+
+
+    <form method="POST" action="/bookings/<%= listing._id %>" onsubmit="setDates()">
+        <input type="hidden" name="checkIn" id="hiddenCheckIn">
+        <input type="hidden" name="checkOut" id="hiddenCheckOut">
+        <input type="hidden" name="totalPrice" id="hiddenTotal">
+
+        <button class="btn btn-danger w-100">Pay Now</button>
+    </form>
+
+</div>
+
+<% } else { %>
+
+<p>Please <a href="/login">login</a> to book this stay</p>
+
+<% } %>
+
+</div>
+
+<div class="col-8 offset-3">
+
+<% if(currUser) {%>
+
+<hr/>
+
+<h4>Leave a Review</h4>
+
+<!-- <form action="/listings/<%= listing.id %>/reviews" method="POST" novalidate class="needs-validation">
+
+<div class="mb-3 mt-3">
+
+<label for="rating" class="form-label">Rating</label>
+
+<fieldset class="starability-slot">
+
+<input type="radio" id="first-rate1" name="review[rating]" value="1"/>
+<label for="first-rate1">1 star</label>
+
+<input type="radio" id="first-rate2" name="review[rating]" value="2"/>
+<label for="first-rate2">2 stars</label>
+
+<input type="radio" id="first-rate3" name="review[rating]" value="3"/>
+<label for="first-rate3">3 stars</label>
+
+<input type="radio" id="first-rate4" name="review[rating]" value="4"/>
+<label for="first-rate4">4 stars</label>
+
+<input type="radio" id="first-rate5" name="review[rating]" value="5"/>
+<label for="first-rate5">5 stars</label>
+
+</fieldset>
+
+</div>
+
+
+<div class="mb-3 mt-3">
+
+<label for="comment" class="form-label">Comments</label>
+
+<textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
+
+<div class="invalid-feedback">
+Please add some comments for review
+</div>
+
+</div>
+
+<button class="btn btn-outline-dark">Submit</button>
+
+</form>
+
+<% } %> -->
+
+<form method="POST" action="/listings/<%= listing._id %>/reviews" novalidate class="needs-validation">
+
+<!-- ⭐ RATING (ADD THIS PART) -->
+<div class="mb-3">
+    <label class="form-label">Rating</label>
+
+    <select name="review[rating]" class="form-control" required>
+        <option value="">Select Rating</option>
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+    </select>
+
+    <div class="invalid-feedback">
+        Please give a rating
+    </div>
+</div>
+
+<!-- 💬 COMMENT -->
+<div class="mb-3 mt-3">
+<label for="comment" class="form-label">Comments</label>
+
+<textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
+
+<div class="invalid-feedback">
+Please add some comments for review
+</div>
+</div>
+
+<button class="btn btn-outline-dark">Submit</button>
+
+</form>
+
+
+
+<% if(listing.reviews.length >0){ %>
+
+<div class="row">
+
+<p><b>All Reviews</b></p>
+
+<% for(review of listing.reviews){ %>
+
+<div class="card col-5 ms-3 mb-3">
+
+<div class="card-body">
+
+<h5 class="card-title">@ <%= review.author.username %></h5>
+
+<p class="starability-result card-text" data-rating="<%= review.rating %>"></p>
+
+<p class="card-text"><%= review.comment %></p>
+
+</div>
+
+<form class="mb-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+
+<button class="btn btn-sm btn-dark">Delete</button>
+
+</form>
+
+</div>
+
+<% } %>
+
+</div>
+
+<% } %>
+
+</div>
+
+
+
+<div class="col-6 offset-3 mb-3">
+
+<h3>Where you'll be</h3>
+
+<div id="map" style="height:400px;"></div>
+
+</div>
+
+<!-- PASS LISTING DATA TO JS -->
+<script>
+
+const listingData = <%- JSON.stringify(listing) %>;
+
+// ✅ City → Coordinates map
+const cityCoordinates = {
+    "Kolkata": { lat: 22.5726, lng: 88.3639 },
+    "Mumbai": { lat: 19.0760, lng: 72.8777 },
+    "Delhi": { lat: 28.6139, lng: 77.2090 },
+    "Paris": { lat: 48.8566, lng: 2.3522 },
+    "London": { lat: 51.5074, lng: -0.1278 },
+    "Goa": { lat: 15.2993, lng: 74.1240 },
+    "Dubai": { lat: 25.2048, lng: 55.2708 },
+    "Darjeeling": { lat: 27.0360, lng: 88.2627 },
+    "Puri": { lat: 19.8135, lng: 85.8312 }
+};
+
+function initMap(){
+
+let location;
+
+// ✅ 1. If geometry exists → use it (best case)
+if(listingData.geometry){
+    location = {
+        lat: listingData.geometry.lat,
+        lng: listingData.geometry.lng
+    };
+}
+else{
+    // ✅ 2. Use city-based coordinates
+    const city = listingData.location;
+    location = cityCoordinates[city] || { lat: 22.5726, lng: 88.3639 }; // default fallback
+}
+
+const map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 10,
+    center: location
+});
+
+new google.maps.Marker({
+    position: location,
+    map: map
+});
+
+}
+
+</script>
+
+<!-- GOOGLE MAP SCRIPT -->
+<script
+src="https://maps.googleapis.com/maps/api/js?key=<%= mapToken %>&callback=initMap"
+async defer>
+</script>
+
+
+<script>
+function setDates(){
+    const checkIn = document.getElementById("checkIn").value;
+    const checkOut = document.getElementById("checkOut").value;
+    const total = document.getElementById("total").innerText;
+
+    if(!checkIn || !checkOut){
+        alert("Please select dates");
+        return false;
+    }
+
+    document.getElementById("hiddenCheckIn").value = checkIn;
+    document.getElementById("hiddenCheckOut").value = checkOut;
+    document.getElementById("hiddenTotal").value = total;
+
+    return true;
+}
+
+</script>
+
+
+<script>
+const pricePerNight = <%= listing.price %>;
+
+function calculatePrice(){
+    const checkIn = document.getElementById("checkIn").value;
+    const checkOut = document.getElementById("checkOut").value;
+
+    if(checkIn && checkOut){
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+
+        const diffTime = end - start;
+        const nights = diffTime / (1000 * 60 * 60 * 24);
+
+        if(nights > 0){
+            const subtotal = nights * pricePerNight;
+            const taxes = Math.floor(subtotal * 0.1); // 10% tax
+            const total = subtotal + taxes;
+
+            document.getElementById("nights").innerText = nights;
+            document.getElementById("subtotal").innerText = subtotal;
+            document.getElementById("taxes").innerText = taxes;
+            document.getElementById("total").innerText = total;
+        }
+    }
+}
+
+// Trigger on date change
+document.getElementById("checkIn").addEventListener("change", calculatePrice);
+document.getElementById("checkOut").addEventListener("change", calculatePrice);
+</script>
+
+<div class="col-6 offset-3 mb-3">
+<h1 class="fw-bold mb-1">Meet Your Host</h1>
+<div class="host-section d-flex flex-column flex-md-row border rounded shadow-sm bg-white p-4 mt-4" style="max-width:900px;">
+
+  <!-- Left Card: Profile + Stats -->
+  <div class="host-left-card d-flex flex-column align-items-center text-center border rounded p-3 me-md-4 mb-3 mb-md-0" style="width:220px; background-color:#f8f9fa;">
+    
+    <!-- Profile Photo -->
+    <div class="profile-photo position-relative mb-2">
+      <img src="/images/host.jpeg" alt="Host Photo" class="rounded-circle" style="width:160px; height:160px; object-fit:cover; border:5px solid #0d6efd;">
+      <span class="position-absolute bottom-0 end-0 bg-warning text-dark px-1 py-0.5 rounded-circle shadow" style="font-size:0.7rem;">⭐</span>
+    </div>
+
+    <!-- Name + Superhost -->
+    <h5 class="fw-bold mb-1">Bratati</h5>
+    <p class="text-primary fw-semibold mb-2" style="font-size:0.85rem;">Superhost</p>
+
+    <!-- Stats -->
+    <div class="stats w-100 text-center">
+      <div class="mb-2">
+        <p class="fw-bold mb-1">136</p>
+        <p class="text-muted mb-0" style="font-size:0.8rem;">Reviews</p>
+        <hr>
+      </div>
+      <div class="mb-2">
+        <p class="fw-bold mb-1">4.94⭐</p>
+        <p class="text-muted mb-0" style="font-size:0.8rem;">Rating</p>
+        <hr>
+      </div>
+      <div>
+        <p class="fw-bold mb-1">1</p>
+        <p class="text-muted mb-0" style="font-size:0.8rem;">Year Hosting</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Section: Description + Host Details + Message Button -->
+  <div class="host-right flex-grow-1 d-flex flex-column justify-content-between">
+    
+    <!-- Host Description -->
+    <div class="mb-3">
+      <p><strong>Bratati is a Superhost</strong></p>
+      <p>Hi, I’m Bratati, passionate about travel and hosting. I love exploring new cultures and making guests feel at home. My goal is to make sure your stay is as comfortable and enjoyable as possible.</p>
+    </div>
+
+    <!-- Host Details -->
+    <div class="mb-3">
+      <p class="mb-1"><strong>Host details</strong></p>
+      <p class="text-muted mb-0">Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.</p>
+    </div>
+
+    <!-- Response Info -->
+    <div class="mb-3">
+      <p class="mb-1"><strong>Response rate:</strong> 98%</p>
+      <p class="mb-1"><strong>Responds within:</strong> an hour</p>
+    </div>
+
+    <!-- Message Host Button -->
+    <div>
+      <button class="btn btn-primary">Message Host</button>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+</div>
+
+
+

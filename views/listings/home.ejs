@@ -1,0 +1,242 @@
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="container-fluid mt-4 px-4">
+
+<form method="GET" action="/listings" class="airbnb-filters">
+
+    <!-- 🌍 City -->
+    <div class="filter-item">
+        <label>City</label>
+        <select name="city" class="form-select">
+            <option value="All" <%= query?.city === "All" ? "selected" : "" %>>All</option>
+            <option <%= query?.city === "Kolkata" ? "selected" : "" %>>Kolkata</option>
+            <option <%= query?.city === "Mumbai" ? "selected" : "" %>>Mumbai</option>
+            <option <%= query?.city === "Delhi" ? "selected" : "" %>>Delhi</option>
+            <option <%= query?.city === "Paris" ? "selected" : "" %>>Paris</option>
+            <option <%= query?.city === "London" ? "selected" : "" %>>London</option>
+            <option <%= query?.city === "Goa" ? "selected" : "" %>>Goa</option>
+            <option <%= query?.city === "Dubai" ? "selected" : "" %>>Dubai</option>
+            <option <%= query?.city === "Darjeeling" ? "selected" : "" %>>Darjeeling</option>
+            <option <%= query?.city === "Puri" ? "selected" : "" %>>Puri</option>
+        </select>
+    </div>
+
+    <!-- 💰 Price -->
+    <div class="filter-item price-box">
+        <label>Max Price: ₹<span id="priceValue"><%= query?.maxPrice || 5000 %></span></label>
+        <input type="range" 
+        name="maxPrice" 
+        min="500" 
+        max="10000" 
+        step="500" 
+        value="<%= query?.maxPrice || 5000 %>"
+        oninput="priceValue.innerText = this.value">
+    </div>
+
+    <!-- 🛏 Nights -->
+    <div class="filter-item">
+        <label>Nights</label>
+        <select name="nights" class="form-select">
+            <option value="">Any</option>
+            <option value="1" <%= query?.nights === "1" ? "selected" : "" %>>1 Night</option>
+            <option value="2" <%= query?.nights === "2" ? "selected" : "" %>>2 Nights</option>
+        </select>
+    </div>
+
+    <!-- 🔘 Button -->
+    <div class="filter-btn-box">
+        <button class="apply-btn">Apply</button>
+    </div>
+
+    <div class="tax-toggle-container mt-10">
+    <span class="tax-text"><h6>Display total after taxes</h6></span>
+
+    <label class="switch">
+        <input type="checkbox" id="taxToggle">
+        <span class="slider round"></span>
+    </label>
+</div>
+
+</form>
+
+<div class="hero-tagline text-center py-4">
+    <h2>Where Comfort Meets Style 🏡</h2>
+    <p>Find the best stays, handpicked just for you</p>
+</div>
+
+</div>
+
+
+<!-- 🔥 CATEGORY BAR -->
+<div class="category-bar">
+
+    <div class="category-item">
+        <i class="fa-solid fa-fire"></i>
+        <span>Trending</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-bed"></i>
+        <span>Rooms</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-city"></i>
+        <span>Iconic Cities</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-mountain"></i>
+        <span>Mountain</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-umbrella-beach"></i>
+        <span>Beach</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-chess-rook"></i>
+        <span>Castles</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-water-ladder"></i>
+        <span>Amazing Pools</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-campground"></i>
+        <span>Camping</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-tractor"></i>
+        <span>Farms</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-regular fa-snowflake"></i>
+        <span>Arctic</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-igloo"></i>
+        <span>Domes</span>
+    </div>
+
+    <div class="category-item">
+        <i class="fa-solid fa-ship"></i>
+        <span>Boats</span>
+    </div>
+
+</div>
+
+<!-- ❌ EMPTY STATE -->
+<% if(Object.keys(groupedListings).length === 0){ %>
+<h4 class="text-center mt-5">No listings found 😢</h4>
+<% } %>
+
+<!-- 🏡 LISTINGS -->
+<% for (let city in groupedListings) { %>
+
+<h3 class="mt-5 mb-4 fw-bold">
+    <%= cityHeadlines[city] %> →
+</h3>
+
+<div class="container-fluid">
+<div class="row">
+
+<% groupedListings[city].forEach(function(listing) { %>
+
+<!-- ✅ COLUMN START -->
+<div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+
+    <!-- ✅ CARD INSIDE COLUMN -->
+    <div class="card listing-card position-relative h-100">
+
+        <!-- ❤️ Wishlist Heart -->
+        <i class="bi <%= wishlistIds.includes(listing._id.toString()) ? 'bi-heart-fill text-danger' : 'bi-heart' %> heart-icon"
+        onclick="toggleWishlist('<%= listing._id %>', this)">
+        </i>
+
+        <!-- Badge -->
+        <span class="badge bg-light text-dark guest-badge">
+            Guest favourite
+        </span>
+
+        <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+
+            <img 
+            src="<%= listing.image.url %>"
+            class="card-img-top listing-img"
+            alt="listing image"/>
+
+            <div class="card-body">
+                <p class="card-text">
+                    <b><%= listing.title %></b><br>
+                    <span 
+                    class="price-value" 
+                    data-base="<%= listing.price %>">
+                    ₹ <%= listing.price.toLocaleString("en-IN") %>
+                    <i class="tax-info"> &nbsp; &nbsp; +18% GST</i>
+                    </span>
+
+                    <small class="text-muted">
+                        <%= listing.location %>, <%= listing.country %>
+                    </small>
+                </p>
+            </div>
+
+        </a>
+
+    </div>
+
+</div>
+<!-- ✅ COLUMN END -->
+
+<% }); %>
+
+</div>
+</div>
+
+<% } %>
+
+<!-- ❤️ Wishlist Script -->
+<script>
+async function toggleWishlist(id, icon){
+
+    let isSaved = icon.classList.contains("bi-heart-fill");
+
+    let res = await fetch(`/wishlist/${id}`, {
+        method: isSaved ? "DELETE" : "POST"
+    });
+
+    if(res.status === 401){
+        window.location.href = "/login";
+        return;
+    }
+
+    if(isSaved){
+        icon.classList.remove("bi-heart-fill","text-danger");
+        icon.classList.add("bi-heart");
+    } else {
+        icon.classList.remove("bi-heart");
+        icon.classList.add("bi-heart-fill","text-danger");
+    }
+}
+</script>
+
+<!-- 🎯 Price Fix -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const slider = document.querySelector("input[name='maxPrice']");
+    const display = document.getElementById("priceValue");
+
+    if(slider && display){
+        display.innerText = slider.value;
+    }
+});
+</script>
+

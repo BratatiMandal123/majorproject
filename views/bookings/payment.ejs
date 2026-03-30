@@ -1,0 +1,73 @@
+<% layout("/layouts/boilerplate") %>
+
+<div id="bookingTimer" class="p-3 border rounded bg-light mb-3">
+    ⏰ Booking expires in: <span id="timer"></span>
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Complete Your Payment 💳</h2>
+
+    <div class="card p-4 col-6 offset-3">
+
+        <h4><%= listing.title %></h4>
+        <p><%= listing.location %></p>
+
+        <p><b>Total Amount:</b> ₹ <%= totalPrice %></p>
+
+        <form method="POST" action="/bookings/confirm">
+
+            <input type="hidden" name="listingId" value="<%= listing._id %>">
+            <input type="hidden" name="totalPrice" value="<%= totalPrice %>">
+            <input type="hidden" name="checkIn" value="<%= checkIn %>">
+            <input type="hidden" name="checkOut" value="<%= checkOut %>">
+            <input type="hidden" name="bookingId" value="<%= booking._id %>">
+
+            <!-- Payment Method -->
+            <div class="mb-3">
+                <label class="form-label">Select Payment Method</label>
+                <select name="paymentMethod" class="form-control" required>
+                    <option value="">Choose</option>
+                    <option value="PhonePe">PhonePe</option>
+                    <option value="GPay">Google Pay</option>
+                    <option value="Paytm">Paytm</option>
+                </select>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                <input type="text" name="phone" class="form-control" required>
+            </div>
+
+            <button type="submit" id="payButton" class="btn btn-success w-100">Confirm Payment</button>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    // Countdown Timer
+    const expiresAt = new Date("<%= booking.expiresAt.toISOString() %>");
+    const payButton = document.getElementById('payButton');
+
+    function updateTimer() {
+        const now = new Date();
+        const diff = expiresAt - now;
+
+        if (diff <= 0) {
+            document.getElementById('timer').innerText = 'Expired';
+            clearInterval(interval);
+            alert('⛔ Your pending booking has expired!');
+            if(payButton) payButton.disabled = true;
+            window.location.href = "/listings/<%= listing._id %>";
+            return;
+        }
+
+        const minutes = Math.floor(diff / 60000);
+        const seconds = Math.floor((diff % 60000) / 1000);
+        document.getElementById('timer').innerText = `${minutes}m ${seconds}s`;
+    }
+
+    const interval = setInterval(updateTimer, 1000);
+    updateTimer();
+</script>

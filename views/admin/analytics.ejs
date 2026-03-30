@@ -1,0 +1,44 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4">📈 Revenue Analytics</h2>
+
+    <div class="card p-4 shadow mx-auto" style="max-width: 800px;">
+
+     <% if (labels.length === 0) { %>
+        <h5 class="text-center text-muted">No booking data available 📭</h5>
+     <% } else { %>
+        <canvas id="revenueChart" height="200"></canvas>
+     <% } %>
+
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+ <% if (labels.length !== 0) { %>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const labels = <%- JSON.stringify(labels) %>;
+    const data = <%- JSON.stringify(revenues) %>;
+
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: data,
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        }
+    });
+</script>
+
+<% } %>
