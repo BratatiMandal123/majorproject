@@ -102,15 +102,6 @@ app.locals.mapToken = process.env.GOOGLE_MAP_KEY;
 app.use("/wishlist", wishlistRoutes);
 app.use("/bookings", bookingRoutes);
 
-// app.get("/demouser", async(req,res)=>{
-//     let fakeUser= new User ({
-//         email: "student@gmail.com",
-//         username: "delta-student"
-//     });
-
-//     let registeredUser = await User.register(fakeUser, "helloworld");
-//     res.send(registeredUser);
-// });
 
 app.use("/listings",listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);

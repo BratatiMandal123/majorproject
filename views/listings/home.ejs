@@ -9,16 +9,16 @@
     <div class="filter-item">
         <label>City</label>
         <select name="city" class="form-select">
-            <option value="All" <%= query?.city === "All" ? "selected" : "" %>>All</option>
-            <option <%= query?.city === "Kolkata" ? "selected" : "" %>>Kolkata</option>
-            <option <%= query?.city === "Mumbai" ? "selected" : "" %>>Mumbai</option>
-            <option <%= query?.city === "Delhi" ? "selected" : "" %>>Delhi</option>
-            <option <%= query?.city === "Paris" ? "selected" : "" %>>Paris</option>
-            <option <%= query?.city === "London" ? "selected" : "" %>>London</option>
-            <option <%= query?.city === "Goa" ? "selected" : "" %>>Goa</option>
-            <option <%= query?.city === "Dubai" ? "selected" : "" %>>Dubai</option>
-            <option <%= query?.city === "Darjeeling" ? "selected" : "" %>>Darjeeling</option>
-            <option <%= query?.city === "Puri" ? "selected" : "" %>>Puri</option>
+           <option value="All" <%= (query && query.city ? query.city : "All") === "All" ? "selected" : "" %>>All</option>
+           <option value="Kolkata" <%= query && query.city === "Kolkata" ? "selected" : "" %>>Kolkata</option>
+           <option value="Mumbai" <%= query && query.city === "Mumbai" ? "selected" : "" %>>Mumbai</option>
+           <option value="Delhi" <%= query && query.city === "Delhi" ? "selected" : "" %>>Delhi</option>
+           <option value="Paris" <%= query && query.city === "Paris" ? "selected" : "" %>>Paris</option>
+           <option value="London" <%= query && query.city === "London" ? "selected" : "" %>>London</option>
+           <option value="Goa" <%= query && query.city === "Goa" ? "selected" : "" %>>Goa</option>
+           <option value="Dubai" <%= query && query.city === "Dubai" ? "selected" : "" %>>Dubai</option>
+           <option value="Darjeeling" <%= query && query.city === "Darjeeling" ? "selected" : "" %>>Darjeeling</option>
+           <option value="Puri" <%= query && query.city === "Puri" ? "selected" : "" %>>Puri</option>
         </select>
     </div>
 
@@ -126,10 +126,7 @@
         <span>Domes</span>
     </div>
 
-    <div class="category-item">
-        <i class="fa-solid fa-ship"></i>
-        <span>Boats</span>
-    </div>
+   
 
 </div>
 
