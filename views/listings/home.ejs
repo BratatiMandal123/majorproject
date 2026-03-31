@@ -9,16 +9,16 @@
     <div class="filter-item">
         <label>City</label>
         <select name="city" class="form-select">
-           <option value="All" <%= (query && query.city ? query.city : "All") === "All" ? "selected" : "" %>>All</option>
-           <option value="Kolkata" <%= query && query.city === "Kolkata" ? "selected" : "" %>>Kolkata</option>
-           <option value="Mumbai" <%= query && query.city === "Mumbai" ? "selected" : "" %>>Mumbai</option>
-           <option value="Delhi" <%= query && query.city === "Delhi" ? "selected" : "" %>>Delhi</option>
-           <option value="Paris" <%= query && query.city === "Paris" ? "selected" : "" %>>Paris</option>
-           <option value="London" <%= query && query.city === "London" ? "selected" : "" %>>London</option>
-           <option value="Goa" <%= query && query.city === "Goa" ? "selected" : "" %>>Goa</option>
-           <option value="Dubai" <%= query && query.city === "Dubai" ? "selected" : "" %>>Dubai</option>
-           <option value="Darjeeling" <%= query && query.city === "Darjeeling" ? "selected" : "" %>>Darjeeling</option>
-           <option value="Puri" <%= query && query.city === "Puri" ? "selected" : "" %>>Puri</option>
+           <option value="All" <%= (typeof query !== 'undefined' && query.city === 'All') ? 'selected' : '' %>>All</option>
+           <option value="Kolkata" <%= (typeof query !== 'undefined' && query.city === 'Kolkata') ? 'selected' : '' %>>Kolkata</option>
+           <option value="Mumbai" <%= (typeof query !== 'undefined' && query.city === 'Mumbai') ? 'selected' : '' %>>Mumbai</option>
+           <option value="Delhi" <%= (typeof query !== 'undefined' && query.city === 'Delhi') ? 'selected' : '' %>>Delhi</option>
+           <option value="Paris" <%= (typeof query !== 'undefined' && query.city === 'Paris') ? 'selected' : '' %>>Paris</option>
+           <option value="London" <%= (typeof query !== 'undefined' && query.city === 'London') ? 'selected' : '' %>>London</option>
+           <option value="Goa" <%= (typeof query !== 'undefined' && query.city === 'Goa') ? 'selected' : '' %>>Goa</option>
+           <option value="Dubai" <%= (typeof query !== 'undefined' && query.city === 'Dubai') ? 'selected' : '' %>>Dubai</option>
+           <option value="Darjeeling" <%= (typeof query !== 'undefined' && query.city === 'Darjeeling') ? 'selected' : '' %>>Darjeeling</option>
+           <option value="Puri" <%= (typeof query !== 'undefined' && query.city === 'Puri') ? 'selected' : '' %>>Puri</option>
         </select>
     </div>
 
