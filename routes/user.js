@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
         Kolkata: "Heritage homes in Kolkata"
     };
 
-    res.render("listings/home", { groupedListings, cityHeadlines,query: req.query });
+    res.render("listings/home", { groupedListings, cityHeadlines,query: req.query, wishlistIds });
 
 });
 
